@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Expo folder
+.expo/
+
+# Python virtual environment
+backend/venv/
+
+# macOS system files
+.DS_Store
+
+# Ignore assets that aren't critical for version control
+cam-app-main/assets/
+
+# Environment files
+.env
