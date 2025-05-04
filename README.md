@@ -135,36 +135,6 @@ This will start the Expo development server, and you can scan the QR code to ope
 
 * * * * *
 
-Project Structure
------------------
-
-### Backend Folder
-
-plaintext
-
-Copy
-
-`/backend
-  ├── app.py                 # Main Flask application file
-  ├── model                  # Pretrained model and related code
-  ├── requirements.txt       # Python dependencies
-  └── utils.py               # Utility functions (image processing, distance estimation)`
-
-### Frontend Folder
-
-plaintext
-
-Copy
-
-`/frontend
-  ├── App.js                 # Main entry point of the React Native app
-  ├── components/            # Reusable UI components (buttons, input fields, etc.)
-  ├── screens/               # Screens for various app views (MapView, Image Capture)
-  ├── assets/                # Images, icons, and other static assets
-  └── app.json               # Expo configuration`
-
-* * * * *
-
 Evaluation Criteria
 -------------------
 
@@ -192,8 +162,3 @@ By the end of the project, you will have developed a fully functional navigation
 -   Determines the user's location and displays it on a mobile app.
 
 * * * * *
-
-Contributions
--------------
-
-If you want to contribute to this project, please fork the repository and create a pull request with the changes you've made. Make sure to provide a clear description of your modifications and include tests where applicable.
