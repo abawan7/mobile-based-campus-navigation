@@ -12,7 +12,8 @@ The Mobile-Based Campus Navigation Assistant is an innovative system designed to
 
 
 ## Demo
-![Demo](https://github.com/abawan7/mobile-based-campus-navigation/blob/main/Demo.gif)
+<img src="https://github.com/abawan7/mobile-based-campus-navigation/blob/main/Demo.gif" width="350" />
+
 
 ## ✨ Features
 
