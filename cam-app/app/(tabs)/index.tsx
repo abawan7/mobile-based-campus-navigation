@@ -1,96 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient'; // For gradient background
-import { FontAwesome } from '@expo/vector-icons'; // For location pin icon
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Dimensions, StatusBar } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons'; // Switched to Ionicons for consistency
+import LottieView from 'lottie-react-native'; // Optional: for more advanced animations
 
-export default function SplitPage() {
-  const [fadeInText] = useState(new Animated.Value(0)); // Initial opacity for first text
-  const [scaleText] = useState(new Animated.Value(0.5)); // Initial scale for first text
+const { width } = Dimensions.get('window');
 
-  const [fadeInDescription] = useState(new Animated.Value(0)); // Initial opacity for description text
-  const [scaleDescription] = useState(new Animated.Value(0.5)); // Initial scale for description text
+export default function SplashPage() {
+  // Animation values
+  const fadeInMain = useRef(new Animated.Value(0)).current;
+  const slideUpMain = useRef(new Animated.Value(50)).current;
+  
+  const fadeInTitle = useRef(new Animated.Value(0)).current;
+  const scaleTitle = useRef(new Animated.Value(0.8)).current;
+  
+  const fadeInDesc = useRef(new Animated.Value(0)).current;
+  const slideUpDesc = useRef(new Animated.Value(30)).current;
+  
+  const pulseIcon = useRef(new Animated.Value(1)).current;
+  
+  // Pulsing animation for the location icon
+  const startPulseAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseIcon, {
+          toValue: 1.2,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseIcon, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
 
-  // Use useEffect to trigger the animation when the component mounts
   useEffect(() => {
-    // First pop animation (for "Find Your Way Around FAST")
-    Animated.timing(fadeInText, {
-      toValue: 1,  // Fade to opacity 1
-      duration: 800, // Duration of the fade
-      useNativeDriver: true,
-    }).start();
+    // Initial animation sequence
+    const animationSequence = Animated.stagger(200, [
+      // First show the background and icon
+      Animated.parallel([
+        Animated.timing(fadeInMain, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideUpMain, {
+          toValue: 0,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ]),
+      
+      // Then animate the title
+      Animated.parallel([
+        Animated.timing(fadeInTitle, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleTitle, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ]),
+      
+      // Finally animate the description
+      Animated.parallel([
+        Animated.timing(fadeInDesc, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideUpDesc, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]);
 
-    Animated.timing(scaleText, {
-      toValue: 1,  // Scale to 1 (original size)
-      duration: 800, // Duration of the scale
-      useNativeDriver: true,
-    }).start();
-
-    // Delay the second pop animation (for description text)
+    // Start the animation sequence
+    animationSequence.start();
+    
+    // Start the pulsing animation for the icon after a delay
     setTimeout(() => {
-      // Second pop animation (for description text)
-      Animated.timing(fadeInDescription, {
-        toValue: 1,  // Fade to opacity 1
-        duration: 800, // Duration of the fade
-        useNativeDriver: true,
-      }).start();
-
-      Animated.timing(scaleDescription, {
-        toValue: 1,  // Scale to 1 (original size)
-        duration: 800, // Duration of the scale
-        useNativeDriver: true,
-      }).start();
-    }, 1000); // Delay of 1 second before starting the second animation
+      startPulseAnimation();
+    }, 1500);
   }, []);
 
   return (
-    <LinearGradient
-      colors={[
-        '#140f32',
-        '#140f32',
-        '#140f32',
-        '#140f32',
-        '#140f32',
-        '#1b163e',
-        '#231d4a',
-        '#2b2456',
-        '#3d3473',
-        '#514592',
-        '#6457b1',
-        '#796ad2',
-      ]}
-      style={styles.bottomHalf}
-    >
-      <View style={styles.textContainer}>
-        {/* Location Pin Icon */}
-        <FontAwesome name="map-marker" size={50} color="#F5F5DC" />
-        
-        {/* Animated Text */}
-        <Animated.Text
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#140f32" />
+      
+      <LinearGradient
+        colors={[
+          '#140f32', // Dark purple base
+          '#1b163e',
+          '#231d4a',
+          '#2b2456',
+          '#3d3473',
+          '#514592',
+          '#6457b1',
+          '#796ad2', // Light purple top
+        ]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 0, y: 0 }}
+        style={styles.background}
+      >
+        <Animated.View 
           style={[
-            styles.bottomText,
+            styles.contentContainer,
             {
-              opacity: fadeInText,  // Apply the fade-in animation
-              transform: [{ scale: scaleText }],  // Apply the scaling animation
-            },
+              opacity: fadeInMain,
+              transform: [{ translateY: slideUpMain }]
+            }
           ]}
         >
-          Find Your Way Around FAST
-        </Animated.Text>
-
-        {/* Animated Description */}
-        <Animated.Text
-          style={[
-            styles.descriptionText,
-            {
-              opacity: fadeInDescription,  // Apply the fade-in animation
-              transform: [{ scale: scaleDescription }],  // Apply the scaling animation
-            },
-          ]}
-        >
-          A mobile-based campus navigation assistant that estimates a user's location using image-based landmark recognition and distance estimation, without relying on GPS.
-        </Animated.Text>
-      </View>
-    </LinearGradient>
+          {/* Animated Icon */}
+          <Animated.View style={{
+            transform: [{ scale: pulseIcon }],
+            marginBottom: 20
+          }}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="location" size={60} color="#FFF" />
+              <View style={styles.iconRing} />
+            </View>
+          </Animated.View>
+          
+          {/* Animated Title */}
+          <Animated.Text
+            style={[
+              styles.title,
+              {
+                opacity: fadeInTitle,
+                transform: [{ scale: scaleTitle }]
+              }
+            ]}
+          >
+            Find Your Way{'\n'}Around FAST
+          </Animated.Text>
+          
+          {/* Animated Description */}
+          <Animated.Text
+            style={[
+              styles.description,
+              {
+                opacity: fadeInDesc,
+                transform: [{ translateY: slideUpDesc }]
+              }
+            ]}
+          >
+            A mobile-based campus navigation assistant using image-based landmark recognition, without relying on GPS.
+          </Animated.Text>
+        </Animated.View>
+      </LinearGradient>
+    </View>
   );
 }
 
@@ -98,34 +166,66 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
-  bottomHalf: {
+  background: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
-
-  textContainer: {
+  contentContainer: {
+    width: '100%',
     alignItems: 'center',
-    justifyContent: 'center', // Center both icon and text vertically
+    justifyContent: 'center',
+    paddingHorizontal: 30,
   },
-
-  bottomText: {
-    fontSize: 40,
-    fontStyle: 'italic',
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 120,
+    height: 120,
+    marginBottom: 10,
+  },
+  iconRing: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  title: {
+    fontSize: 36,
     fontWeight: 'bold',
-    color: '#F5F5DC',
-    marginTop: 10, // Add space between icon and text
+    color: '#FFF',
     textAlign: 'center',
+    marginBottom: 24,
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.15)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 10,
   },
-
-  descriptionText: {
-    fontSize: 18, // Smaller font size for the description
-    fontStyle: 'normal', // Normal style for the description
-    color: '#F5F5DC',
-    marginTop: 20, // Add space between the main text and the description
+  description: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
-    paddingHorizontal: 20, // Add some padding for better readability
+    marginBottom: 40,
+    maxWidth: width * 0.85,
+  },
+  bottomIndicator: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 50,
+  },
+  indicatorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    width: 24,
+    backgroundColor: '#FFF',
   },
 });

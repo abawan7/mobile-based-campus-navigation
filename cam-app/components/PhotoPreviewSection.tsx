@@ -1,100 +1,185 @@
-import { Fontisto, AntDesign } from '@expo/vector-icons';
-import { CameraCapturedPicture } from 'expo-camera';
 import React from 'react';
-import { TouchableOpacity, SafeAreaView, Image, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, SafeAreaView, Image, StyleSheet, View, Text, StatusBar, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { CameraCapturedPicture } from 'expo-camera';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const { width, height } = Dimensions.get('window');
+
+// Constant for tab bar height from _layout.tsx
+const TAB_BAR_HEIGHT = 64 + 20; // height + bottom margin
 
 const PhotoPreviewSection = ({
     photo,
     handleRetakePhoto,
-    handleEstimate // Added handleEstimate as a prop
+    handleEstimate
 }: {
     photo: CameraCapturedPicture;
     handleRetakePhoto: () => void;
     handleEstimate: () => void;
-}) => (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.box}>
-        {/* Image takes full width and height */}
-        <Image
-          style={styles.previewContainer}
-          source={{ uri: photo?.uri }} 
-        />
-        
-        {/* Buttons container */}
-        <View style={styles.buttonContainer}>
-          {/* Retake Button (Trash Icon) */}
-          <TouchableOpacity style={[styles.button, styles.retakeButton]} onPress={handleRetakePhoto}>
-            <Fontisto name="trash" size={25} color="white" />
-          </TouchableOpacity>
+}) => {
+    // Get safe area insets
+    const insets = useSafeAreaInsets();
 
-          {/* Estimate Button with Logo */}
-          <TouchableOpacity style={[styles.button, styles.estimateButton]} onPress={handleEstimate}>
-            {/* Replace the Text component with an Image (Logo) */}
-            <AntDesign name="arrowright" size={20} color="white" />
-          </TouchableOpacity>
+    return (
+        <View style={styles.container}>
+            <StatusBar barStyle="light-content" />
+            
+            {/* Header with back button */}
+            <SafeAreaView style={styles.header}>
+                <TouchableOpacity 
+                    style={styles.backButton}
+                    onPress={handleRetakePhoto}
+                >
+                    <Ionicons name="arrow-back" size={24} color="white" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Preview</Text>
+                <View style={styles.placeholder} />
+            </SafeAreaView>
+            
+            {/* Image preview */}
+            <View style={styles.imageContainer}>
+                <Image
+                    style={styles.previewImage}
+                    source={{ uri: photo?.uri }}
+                />
+                
+                {/* Overlay gradient at the bottom of the image */}
+                <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.8)']}
+                    style={styles.imageOverlay}
+                />
+            </View>
+            
+            {/* Action buttons - positioned to stay above tab bar */}
+            <View style={[
+                styles.controlsContainer,
+                { paddingBottom: TAB_BAR_HEIGHT + 10 } // Add padding to account for tab bar
+            ]}>
+                <View style={styles.actionText}>
+                    <Text style={styles.infoText}>Ready to locate this building?</Text>
+                </View>
+                
+                <View style={styles.buttonContainer}>
+                    {/* Retake Button */}
+                    <TouchableOpacity 
+                        style={styles.retakeButton} 
+                        onPress={handleRetakePhoto}
+                    >
+                        <Ionicons name="refresh-outline" size={22} color="#FFF" />
+                        <Text style={styles.buttonText}>Retake</Text>
+                    </TouchableOpacity>
+                    
+                    {/* Estimate Button */}
+                    <TouchableOpacity 
+                        style={styles.estimateButton} 
+                        onPress={handleEstimate}
+                    >
+                        <Ionicons name="location" size={22} color="#FFF" />
+                        <Text style={styles.buttonText}>Locate</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
-      </View>
-    </SafeAreaView>
-);
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#000',
+    },
+    header: {
+        flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'black', 
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 12,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        zIndex: 10,
+    },
+    backButton: {
+        padding: 8,
+        borderRadius: 20,
+        backgroundColor: 'rgba(80,80,80,0.5)',
+    },
+    headerTitle: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    placeholder: {
+        width: 40, // Ensures the title stays centered
+    },
+    imageContainer: {
+        flex: 1,
+        position: 'relative',
+    },
+    previewImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    imageOverlay: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 150, // Height of the gradient overlay
+    },
+    controlsContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
         padding: 20,
     },
-    box: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 15,
-        overflow: 'hidden', 
-        backgroundColor: 'white', 
-        shadowColor: '#000', 
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-        elevation: 10, 
-        position: 'relative', 
+    actionText: {
+        marginBottom: 20,
+        alignItems: 'center',
     },
-    previewContainer: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover', 
+    infoText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '500',
+        textAlign: 'center',
     },
     buttonContainer: {
-        position: 'absolute', 
-        bottom: 20, // Keep buttons at the bottom of the screen
-        left: '50%',
-        transform: [{ translateX: -100 }], // Center the buttons horizontally
-        flexDirection: 'row', // Arrange buttons side by side
-        justifyContent: 'center', 
-        alignItems: 'center',
-    },
-    button: {
-        padding: 15,
-        borderRadius: 50, 
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginBottom: 20,
     },
     retakeButton: {
-        backgroundColor: '#FF6347', // Tomato color for trash button
-        marginRight: 30,
-        marginLeft: 30 // Add space between buttons
+        backgroundColor: '#444',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 25,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: width * 0.4,
+        elevation: 3,
     },
     estimateButton: {
-        backgroundColor: '#796AD2', // Purple color for estimate button
+        backgroundColor: '#3E92CC', // Changed to blue to make it stand out
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 25,
         flexDirection: 'row',
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
+        width: width * 0.4,
+        elevation: 3,
     },
-    logo: {
-        width: 25, // Set the width of the logo
-        height: 25, // Set the height of the logo
-        marginRight: 10, // Add space between logo and the arrow icon
-    }
+    buttonText: {
+        color: 'white',
+        marginLeft: 8,
+        fontSize: 16,
+        fontWeight: '600',
+    },
 });
 
 export default PhotoPreviewSection;
