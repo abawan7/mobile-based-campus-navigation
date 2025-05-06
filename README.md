@@ -12,7 +12,7 @@ The Mobile-Based Campus Navigation Assistant is an innovative system designed to
 
 
 ## Demo
-![Demo](https://github.com/abawan7/banking-web-app/blob/main/Demo.gif)
+![Demo](https://github.com/abawan7/mobile-based-campus-navigation/blob/main/Demo.gif)
 
 ## ✨ Features
 
