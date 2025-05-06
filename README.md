@@ -10,6 +10,10 @@
 
 The Mobile-Based Campus Navigation Assistant is an innovative system designed to estimate a user's location on Fast NUCES **without using GPS**. Instead, it relies on image-based landmark recognition and distance estimation. The project includes a mobile app that identifies campus buildings and determines the user's position based on captured images.
 
+
+## Demo
+![Demo](https://github.com/abawan7/banking-web-app/blob/main/Demo.gif)
+
 ## ✨ Features
 
 - **Landmark Recognition**: Uses a pretrained model to recognize buildings on the campus
